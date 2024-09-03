@@ -25,6 +25,7 @@ public class GameRoomController {
         this.gameRoomService = gameRoomService;
     }
 
+    // Basic Crudd ----------------------------------
     @GetMapping("{gameRoomID}")
     public ResponseEntity<GameRoom> getGameRoom(@PathVariable("gameRoomID") String gameRoomID) {
 
@@ -50,5 +51,13 @@ public class GameRoomController {
         }
 
     }
+    // ----------------------------------
+
+
+    
+
+
+
+
 
 }
