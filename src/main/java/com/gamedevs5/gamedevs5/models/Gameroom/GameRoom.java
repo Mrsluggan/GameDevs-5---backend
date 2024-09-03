@@ -1,10 +1,11 @@
-package com.gamedevs5.gamedevs5.models;
+package com.gamedevs5.gamedevs5.models.Gameroom;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import com.gamedevs5.gamedevs5.models.User;
 
 @Document("gameRoom")
 public class GameRoom {
@@ -23,8 +24,7 @@ public class GameRoom {
 
     }
 
-    public GameRoom(String id, String gameRoomName, User roomOwner, List<GameRoomChat> chatMessages,
-            List<User> listOfPlayers, List<User> leaderboard, Boolean status) {
+    public GameRoom(String id, String gameRoomName, User roomOwner, List<GameRoomChat> chatMessages,List<User> listOfPlayers, List<User> leaderboard, Boolean status) {
         this.id = id;
         this.gameRoomName = gameRoomName;
         this.roomOwner = roomOwner;

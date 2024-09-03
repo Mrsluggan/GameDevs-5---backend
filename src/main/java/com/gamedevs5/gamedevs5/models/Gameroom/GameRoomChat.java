@@ -1,6 +1,8 @@
-package com.gamedevs5.gamedevs5.models;
+package com.gamedevs5.gamedevs5.models.Gameroom;
 
 import java.util.List;
+
+import com.gamedevs5.gamedevs5.models.Message;
 
 public class GameRoomChat {
     private String id;
