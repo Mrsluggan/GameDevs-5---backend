@@ -1,6 +1,7 @@
 package com.gamedevs5.gamedevs5.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -17,19 +18,42 @@ public class GameRoomService {
         this.mongoOperations = mongoOperations;
     }
 
-    public GameRoom getGameRoomById(String gameRoomId) {
+    public Optional<GameRoom> getGameRoomById(String gameRoomId) {
+        if (gameRoomId == null || gameRoomId.trim().isEmpty()) {
+            throw new IllegalArgumentException("GameRoom ID cannot be null or empty");
+        }
 
-        return null;
+        try {
+            GameRoom gameRoom = mongoOperations.findById(gameRoomId, GameRoom.class);
+            return Optional.ofNullable(gameRoom);
+        } catch (Exception e) {
+            throw new RuntimeException("An error occurred while retrieving the game room with ID: " + gameRoomId, e);
+        }
     }
 
     public List<GameRoom> getAllGamerooms() {
+        try {
+            List<GameRoom> listOfGameRooms = mongoOperations.findAll(GameRoom.class);
+            if (listOfGameRooms == null) {
+                throw new Exception("There are no active rooms found");
+            }
+            return listOfGameRooms;
+        } catch (Exception e) {
+            throw new RuntimeException("An error occurred while retrieving the game rooms", e);
+        }
 
-        return null;
     }
 
     public GameRoom createGameRoom(GameRoom newGameRoom) {
+        try {
+            if (newGameRoom == null) {
+                throw new Exception("The provided GameRoom object is null.");
+            }
 
-        return null;
+            return mongoOperations.save(newGameRoom);
+        } catch (Exception e) {
+            throw new RuntimeException("An error occurred while creating the game room", e);
+        }
     }
 
 }
