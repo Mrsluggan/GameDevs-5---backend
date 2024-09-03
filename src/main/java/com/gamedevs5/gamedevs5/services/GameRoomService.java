@@ -1,13 +1,14 @@
 package com.gamedevs5.gamedevs5.services;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.stereotype.Service;
 
 import com.gamedevs5.gamedevs5.models.Gameroom.GameRoom;
+import com.mongodb.client.result.DeleteResult;
 
 @Service
 public class GameRoomService {
@@ -18,13 +19,11 @@ public class GameRoomService {
         this.mongoOperations = mongoOperations;
     }
 
-    public Optional<GameRoom> getGameRoomById(String gameRoomID) {
-        if (gameRoomID == null || gameRoomID.trim().isEmpty()) {
-            throw new IllegalArgumentException("GameRoom ID cannot be null or empty");
-        }
+    public GameRoom getGameRoomById(String gameRoomID) {
+
         try {
             GameRoom gameRoom = mongoOperations.findById(gameRoomID, GameRoom.class);
-            return Optional.ofNullable(gameRoom);
+            return gameRoom;
         } catch (Exception e) {
             throw new RuntimeException("An error occurred while retrieving the game room with ID: " + gameRoomID, e);
         }
@@ -33,8 +32,8 @@ public class GameRoomService {
     public List<GameRoom> getAllGamerooms() {
         try {
             List<GameRoom> listOfGameRooms = mongoOperations.findAll(GameRoom.class);
-            if (listOfGameRooms == null) {
-                throw new Exception("There are no active rooms found");
+            if (listOfGameRooms == null || listOfGameRooms.isEmpty()) {
+                listOfGameRooms = Collections.emptyList();
             }
             return listOfGameRooms;
         } catch (Exception e) {
@@ -55,16 +54,12 @@ public class GameRoomService {
         }
     }
 
-    public void deleteGameRoom(String gameRoomID) {
-        if (gameRoomID == null || gameRoomID.trim().isEmpty()) {
-            throw new IllegalArgumentException("GameRoom ID cannot be null or empty");
+    public DeleteResult deleteGameRoom(String gameRoomID) {
+        GameRoom gameRoom = getGameRoomById(gameRoomID);
+        if (gameRoom == null) {
+            return null;
         }
-        try {
-            mongoOperations.remove(getGameRoomById(gameRoomID));
-
-        } catch (Exception e) {
-            throw new RuntimeException("An error occurred while removing the game room", e);
-        }
+        return mongoOperations.remove(gameRoom);
 
     }
 
