@@ -18,16 +18,15 @@ public class GameRoomService {
         this.mongoOperations = mongoOperations;
     }
 
-    public Optional<GameRoom> getGameRoomById(String gameRoomId) {
-        if (gameRoomId == null || gameRoomId.trim().isEmpty()) {
+    public Optional<GameRoom> getGameRoomById(String gameRoomID) {
+        if (gameRoomID == null || gameRoomID.trim().isEmpty()) {
             throw new IllegalArgumentException("GameRoom ID cannot be null or empty");
         }
-
         try {
-            GameRoom gameRoom = mongoOperations.findById(gameRoomId, GameRoom.class);
+            GameRoom gameRoom = mongoOperations.findById(gameRoomID, GameRoom.class);
             return Optional.ofNullable(gameRoom);
         } catch (Exception e) {
-            throw new RuntimeException("An error occurred while retrieving the game room with ID: " + gameRoomId, e);
+            throw new RuntimeException("An error occurred while retrieving the game room with ID: " + gameRoomID, e);
         }
     }
 
@@ -54,6 +53,19 @@ public class GameRoomService {
         } catch (Exception e) {
             throw new RuntimeException("An error occurred while creating the game room", e);
         }
+    }
+
+    public void deleteGameRoom(String gameRoomID) {
+        if (gameRoomID == null || gameRoomID.trim().isEmpty()) {
+            throw new IllegalArgumentException("GameRoom ID cannot be null or empty");
+        }
+        try {
+            mongoOperations.remove(getGameRoomById(gameRoomID));
+
+        } catch (Exception e) {
+            throw new RuntimeException("An error occurred while removing the game room", e);
+        }
+
     }
 
 }
