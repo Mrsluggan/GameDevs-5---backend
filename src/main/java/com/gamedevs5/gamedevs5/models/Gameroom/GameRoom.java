@@ -15,7 +15,7 @@ public class GameRoom {
     private String gameRoomName;
     private User roomOwner;
 
-    private List<GameRoomChat> chatMessages;
+    private GameRoomChat chatMessages;
     private List<User> listOfPlayers;
     private List<User> leaderboard;
     private Boolean status;
@@ -24,7 +24,8 @@ public class GameRoom {
 
     }
 
-    public GameRoom(String id, String gameRoomName, User roomOwner, List<GameRoomChat> chatMessages,List<User> listOfPlayers, List<User> leaderboard, Boolean status) {
+    public GameRoom(String id, String gameRoomName, User roomOwner, GameRoomChat chatMessages, List<User> listOfPlayers,
+            List<User> leaderboard, Boolean status) {
         this.id = id;
         this.gameRoomName = gameRoomName;
         this.roomOwner = roomOwner;
@@ -58,11 +59,11 @@ public class GameRoom {
         this.roomOwner = roomOwner;
     }
 
-    public List<GameRoomChat> getChatMessages() {
+    public GameRoomChat getChatMessages() {
         return chatMessages;
     }
 
-    public void setChatMessages(List<GameRoomChat> chatMessages) {
+    public void setChatMessages(GameRoomChat chatMessages) {
         this.chatMessages = chatMessages;
     }
 
