@@ -2,12 +2,12 @@ package com.gamedevs5.gamedevs5.services;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.stereotype.Service;
 
 import com.gamedevs5.gamedevs5.models.Gameroom.GameRoom;
+import com.gamedevs5.gamedevs5.models.Gameroom.GameRoomChat;
 import com.mongodb.client.result.DeleteResult;
 
 @Service
@@ -44,9 +44,14 @@ public class GameRoomService {
 
     public GameRoom createGameRoom(GameRoom newGameRoom) {
         try {
-            if (newGameRoom == null) {
-                throw new Exception("The provided GameRoom object is null.");
-            }
+            
+            newGameRoom.setListOfPlayers(Collections.emptyList());
+            newGameRoom.setStatus(false);
+
+            GameRoomChat gameRoomChat = new GameRoomChat();
+            gameRoomChat.setListOfMessages(Collections.emptyList());
+            newGameRoom.setRoomChat(gameRoomChat);
+
 
             return mongoOperations.save(newGameRoom);
         } catch (Exception e) {
