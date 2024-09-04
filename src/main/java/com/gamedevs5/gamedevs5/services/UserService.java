@@ -42,4 +42,17 @@ public class UserService {
         user.setPassword(encryptedPassword);
         return mongoOperations.insert(user);
     }
+
+    public User addWin(String userId) {
+        Query query = new Query(Criteria.where("userId").is(userId));
+        User user = mongoOperations.findOne(query, User.class);
+
+        if (user != null) {
+            user.setTotalWins(user.getTotalWins() + 1);
+            mongoOperations.save(user);
+            return user;
+        } else {
+            throw new RuntimeException("Användaren " + userId + " finns inte.");
+        }
+    }
 }
