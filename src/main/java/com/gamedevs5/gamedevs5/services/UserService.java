@@ -2,6 +2,7 @@ package com.gamedevs5.gamedevs5.services;
 
 import java.util.List;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -27,6 +28,13 @@ public class UserService {
     public User getUserByUsername(String username) {
         Query query = new Query(Criteria.where("username").is(username));
         return mongoOperations.findOne(query, User.class);
+    }
+
+    public List<User> getTopWinsUsers(int length) {
+        Query query = new Query();
+        query.with(Sort.by(Sort.Direction.DESC, "totalWins"));
+        query.limit(length);
+        return mongoOperations.find(query, User.class);
     }
 
     public User addUser(User user) {
