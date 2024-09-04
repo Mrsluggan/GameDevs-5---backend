@@ -2,36 +2,20 @@ package com.gamedevs5.gamedevs5.models.Gameroom;
 
 import java.util.List;
 
+import org.springframework.data.annotation.Id;
+
 import com.gamedevs5.gamedevs5.models.Message;
 
 public class GameRoomChat {
-    private String id;
-    private String gameRoomId;
-    private List<Message> listOfMessages;
+
+    private List<Message> listOfMessages = List.of();
 
     public GameRoomChat() {
     }
 
-    public GameRoomChat(String id, String gameRoomId, List<Message> listOfMessages) {
-        this.id = id;
-        this.gameRoomId = gameRoomId;
+    public GameRoomChat(List<Message> listOfMessages) {
+
         this.listOfMessages = listOfMessages;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getGameRoomId() {
-        return gameRoomId;
-    }
-
-    public void setGameRoomId(String gameRoomId) {
-        this.gameRoomId = gameRoomId;
     }
 
     public List<Message> getListOfMessages() {
