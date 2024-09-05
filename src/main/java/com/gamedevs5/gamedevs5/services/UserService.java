@@ -63,4 +63,26 @@ public class UserService {
             throw new RuntimeException("Användaren " + userId + " finns inte.");
         }
     }
+
+    public User addPoints(String guesserId, String painterId) {
+        Query guesserQuery = new Query(Criteria.where("userId").is(guesserId));
+        User guesser = mongoOperations.findOne(guesserQuery, User.class);
+
+        Query painterQuery = new Query(Criteria.where("userId").is(painterId));
+        User painter = mongoOperations.findOne(painterQuery, User.class);
+
+        if (guesser == null || painter == null) {
+            throw new RuntimeException("Användaren " + guesserId + " eller " + painterId + " finns inte.");
+        }
+
+        guesser.setCurrentPoints(guesser.getCurrentPoints() + 3);
+        painter.setCurrentPoints(painter.getCurrentPoints() + 1);
+
+        mongoOperations.save(guesser);
+        mongoOperations.save(painter);
+
+        return guesser;
+    }
+
+  
 }
