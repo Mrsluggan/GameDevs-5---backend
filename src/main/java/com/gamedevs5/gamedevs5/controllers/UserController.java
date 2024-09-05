@@ -43,6 +43,12 @@ public class UserController {
         return userService.getUsers();
     }
 
+    @GetMapping("/get-top-users")
+    public ResponseEntity<List<User>> getTopWinsUsers() {
+        List<User> topUsers = userService.getTopWinsUsers(5);
+        return ResponseEntity.ok(topUsers);
+    }
+
     @PostMapping("/register-user")
     public ResponseEntity<?> addUser(@RequestBody User user) {
 
