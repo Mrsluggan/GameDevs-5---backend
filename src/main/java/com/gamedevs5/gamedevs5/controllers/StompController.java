@@ -1,12 +1,19 @@
 package com.gamedevs5.gamedevs5.controllers;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
-@RestController
+@Controller
+@CrossOrigin("http://localhost:5173/")
 public class StompController {
-    @GetMapping()
-    public String getRoot() {
-        return "Hej";
+    @MessageMapping("/broadcast")
+    @SendTo("/topic/reply")
+    public String broadcastMessage(@Payload String message) {
+        return "You have received a message: " + message;
     }
+
+    
 }
