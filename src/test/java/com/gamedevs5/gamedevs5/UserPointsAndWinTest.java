@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Query;
 
@@ -40,6 +41,35 @@ class UserPointsAndWinTest {
         when(userService.addWin(userId)).thenReturn(user);
 
         assertEquals(2, user.getTotalWins());
+        
+    }
+
+    @Test
+    public void testAddPointsToUsers() throws Exception {
+
+        String userId = "1";
+        User winner = new User(userId, "testname", "testpassword", 0, 1);
+
+        String userId2 = "2";
+        User painter = new User(userId2, "testname2", "testpassword2", 0, 1);
+
+        when(mongoOperations.findOne(any(Query.class), eq(User.class)))
+                .thenAnswer(invocation -> {
+                    Query query = invocation.getArgument(0);
+                    if (query.getQueryObject().get("userId").equals(userId)) {
+                        return winner;
+                    } else if (query.getQueryObject().get("userId").equals(userId2)) {
+                        return painter;
+                    }
+                    return null;
+                });
+
+        userService.addPoints(userId, userId2);
+
+
+        assertEquals(3, winner.getCurrentPoints());
+        assertEquals(1, painter.getCurrentPoints());
+     
         
     }
     

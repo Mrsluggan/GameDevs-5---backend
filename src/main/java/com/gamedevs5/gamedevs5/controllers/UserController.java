@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gamedevs5.gamedevs5.models.User;
@@ -95,5 +96,18 @@ public class UserController {
         }
 
     }
+
+    @PostMapping("/pointsRewarded")
+    public ResponseEntity<String> addPoints(@RequestParam String winnerId, @RequestParam String painterId) {
+        try {
+            userService.addPoints(winnerId, painterId);
+            return ResponseEntity.ok("points added");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Kunde inte lägga till poäng");
+        }
+
+    }
+
 
 }
