@@ -84,4 +84,15 @@ public class GameRoomController {
 
     }
 
+
+
+
+    @MessageMapping("/echo")
+    @SendTo("/topic/test")
+    public String ass() {
+        System.out.println("här komm ett meddelande");
+        return "3===D";
+    }
+
+
 }
