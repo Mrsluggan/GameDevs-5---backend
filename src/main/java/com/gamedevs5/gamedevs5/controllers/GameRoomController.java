@@ -78,14 +78,11 @@ public class GameRoomController {
 
     @MessageMapping("/welcome/{groupId}")
     @SendTo("/topic/welcome/{groupId}")
-    public Welcome hello(@DestinationVariable String groupId) {
-
+    public Welcome hello(@DestinationVariable String groupId,@Payload User user) {
+        System.out.println(user);
         return new Welcome(groupId, "welcome to the chat ");
 
     }
-
-
-
 
     @MessageMapping("/echo")
     @SendTo("/topic/test")
@@ -93,6 +90,5 @@ public class GameRoomController {
         System.out.println("här komm ett meddelande");
         return "3===D";
     }
-
 
 }
