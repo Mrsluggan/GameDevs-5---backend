@@ -78,10 +78,8 @@ public class GameRoomController {
 
     @MessageMapping("/welcome/{groupId}")
     @SendTo("/topic/welcome/{groupId}")
-    public Welcome hello(@DestinationVariable String groupId,@Payload User user) {
-        System.out.println(user);
-        return new Welcome(groupId, "welcome to the chat ");
-
+    public Welcome hello(@DestinationVariable String groupId, @RequestBody User user) {
+        return new Welcome(groupId, "Welcome to the chat, " + user.getUsername() + "!");
     }
 
     @MessageMapping("/echo")
