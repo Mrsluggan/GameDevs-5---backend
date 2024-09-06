@@ -9,8 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gamedevs5.gamedevs5.models.User;
@@ -40,6 +42,12 @@ public class UserController {
     @GetMapping("/get-users")
     public List<User> getUsers() {
         return userService.getUsers();
+    }
+
+    @GetMapping("/get-top-users")
+    public ResponseEntity<List<User>> getTopWinsUsers() {
+        List<User> topUsers = userService.getTopWinsUsers(5);
+        return ResponseEntity.ok(topUsers);
     }
 
     @PostMapping("/register-user")
@@ -76,4 +84,30 @@ public class UserController {
         }
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Fel användarnamn eller lösenord.");
     }
+
+    @PostMapping("/add-win/{userId}")
+    public ResponseEntity<?> addWin(@PathVariable String userId) {
+        try {
+            User updatedUser = userService.addWin(userId);
+            return ResponseEntity.ok(updatedUser);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Kunde inte lägga til vinst");
+        }
+
+    }
+
+    @PostMapping("/pointsRewarded")
+    public ResponseEntity<String> addPoints(@RequestParam String winnerId, @RequestParam String painterId) {
+        try {
+            userService.addPoints(winnerId, painterId);
+            return ResponseEntity.ok("points added");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Kunde inte lägga till poäng");
+        }
+
+    }
+
+
 }

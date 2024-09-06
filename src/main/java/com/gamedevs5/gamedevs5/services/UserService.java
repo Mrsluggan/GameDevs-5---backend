@@ -2,6 +2,7 @@ package com.gamedevs5.gamedevs5.services;
 
 import java.util.List;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -29,6 +30,13 @@ public class UserService {
         return mongoOperations.findOne(query, User.class);
     }
 
+    public List<User> getTopWinsUsers(int length) {
+        Query query = new Query();
+        query.with(Sort.by(Sort.Direction.DESC, "totalWins"));
+        query.limit(length);
+        return mongoOperations.find(query, User.class);
+    }
+
     public User addUser(User user) {
 
         Query query = new Query();
@@ -42,4 +50,39 @@ public class UserService {
         user.setPassword(encryptedPassword);
         return mongoOperations.insert(user);
     }
+
+    public User addWin(String userId) {
+        Query query = new Query(Criteria.where("userId").is(userId));
+        User user = mongoOperations.findOne(query, User.class);
+
+        if (user != null) {
+            user.setTotalWins(user.getTotalWins() + 1);
+            mongoOperations.save(user);
+            return user;
+        } else {
+            throw new RuntimeException("Användaren " + userId + " finns inte.");
+        }
+    }
+
+    public User addPoints(String guesserId, String painterId) {
+        Query guesserQuery = new Query(Criteria.where("userId").is(guesserId));
+        User guesser = mongoOperations.findOne(guesserQuery, User.class);
+
+        Query painterQuery = new Query(Criteria.where("userId").is(painterId));
+        User painter = mongoOperations.findOne(painterQuery, User.class);
+
+        if (guesser == null || painter == null) {
+            throw new RuntimeException("Användaren " + guesserId + " eller " + painterId + " finns inte.");
+        }
+
+        guesser.setCurrentPoints(guesser.getCurrentPoints() + 3);
+        painter.setCurrentPoints(painter.getCurrentPoints() + 1);
+
+        mongoOperations.save(guesser);
+        mongoOperations.save(painter);
+
+        return guesser;
+    }
+
+  
 }

@@ -9,11 +9,15 @@ public class User {
     private String userId;
     private String username;
     private String password;
+    private int currentPoints;
+    private int totalWins;
 
-    public User(String userId, String username, String password) {
+    public User(String userId, String username, String password, int currentPoints, int totalWins) {
         this.userId = userId;
         this.username = username;
         this.password = password;
+        this.currentPoints = currentPoints;
+        this.totalWins = totalWins;
     }
 
     public String getUserId() {
@@ -38,6 +42,22 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public int getCurrentPoints() {
+        return currentPoints;
+    }
+
+    public void setCurrentPoints(int currentPoints) {
+        this.currentPoints = currentPoints;
+    }
+
+    public int getTotalWins() {
+        return totalWins;
+    }
+
+    public void setTotalWins(int totalWins) {
+        this.totalWins = totalWins;
     }
 
 }
