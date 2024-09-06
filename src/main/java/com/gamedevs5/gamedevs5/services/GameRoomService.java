@@ -4,10 +4,10 @@ import java.util.Collections;
 import java.util.List;
 
 import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
+
 import org.springframework.stereotype.Service;
+
+import com.gamedevs5.gamedevs5.models.User;
 
 import com.gamedevs5.gamedevs5.models.Gameroom.GameRoom;
 import com.gamedevs5.gamedevs5.models.Gameroom.GameRoomChat;
@@ -71,10 +71,15 @@ public class GameRoomService {
 
     }
 
-    @MessageMapping("/group/{gameRoomID}")
-    @SendTo("/topic/reply/{gameRoomID}")
-    public String groupChat(@Payload String message) {
-        return "You have received a message: " + message;
+    public GameRoom joinGameRoom(String gameRoomID, User user) {
+
+        GameRoom gameRoom = getGameRoomById(gameRoomID);
+        if (gameRoom == null) {
+            return null;
+        }
+        gameRoom.getListOfPlayers().add(user);
+
+        return mongoOperations.save(gameRoom);
     }
 
 }

@@ -3,6 +3,10 @@ package com.gamedevs5.gamedevs5.controllers;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +16,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gamedevs5.gamedevs5.dto.Welcome;
+import com.gamedevs5.gamedevs5.models.Message;
+import com.gamedevs5.gamedevs5.models.User;
 import com.gamedevs5.gamedevs5.models.Gameroom.GameRoom;
 import com.gamedevs5.gamedevs5.services.GameRoomService;
 
@@ -53,6 +60,28 @@ public class GameRoomController {
         }
 
     }
+
     // ----------------------------------
+
+    @MessageMapping("/join/{gameRoomID}")
+    @SendTo("/topic/message/{gameRoomID}")
+    public GameRoom join(@DestinationVariable String gameRoomID, @Payload User user) {
+        System.out.println("Joining game room: " + user.getUsername());
+        return null;
+    }
+
+    @MessageMapping("/message/{gameRoomID}")
+    @SendTo("/topic/message/{gameRoomID}")
+    public Message sendMessage(@Payload Message message, @DestinationVariable String gameRoomID) {
+        return message;
+    }
+
+    @MessageMapping("/welcome/{groupId}")
+    @SendTo("/topic/welcome/{groupId}")
+    public Welcome hello(@DestinationVariable String groupId) {
+
+        return new Welcome(groupId, "welcome to the chat ");
+
+    }
 
 }
