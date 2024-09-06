@@ -2,7 +2,6 @@ package com.gamedevs5.gamedevs5.models.Gameroom;
 
 import java.util.List;
 
-import org.springframework.data.annotation.Id;
 
 import com.gamedevs5.gamedevs5.models.Message;
 
