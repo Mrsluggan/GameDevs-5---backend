@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gamedevs5.gamedevs5.dto.UserDTO;
 import com.gamedevs5.gamedevs5.dto.Welcome;
 import com.gamedevs5.gamedevs5.models.Message;
 import com.gamedevs5.gamedevs5.models.User;
@@ -72,14 +73,14 @@ public class GameRoomController {
 
     @MessageMapping("/message/{gameRoomID}")
     @SendTo("/topic/message/{gameRoomID}")
-    public Message sendMessage(@Payload Message message, @DestinationVariable String gameRoomID) {
+    public Message sendMessage(@DestinationVariable String gameRoomID, @RequestBody Message message) {
         return message;
     }
 
     @MessageMapping("/welcome/{groupId}")
     @SendTo("/topic/welcome/{groupId}")
-    public Welcome hello(@DestinationVariable String groupId, @RequestBody User user) {
-        return new Welcome(groupId, "Welcome to the chat, " + user.getUsername() + "!");
+    public Message hello(@DestinationVariable String groupId, @RequestBody UserDTO user) {
+        return new Message(user.getUsername(), "Welcome to the game " + user.getUsername());
     }
 
     @MessageMapping("/echo")

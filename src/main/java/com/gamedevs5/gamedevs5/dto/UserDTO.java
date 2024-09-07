@@ -5,6 +5,10 @@ public class UserDTO {
     
     private String username;
 
+
+    public UserDTO() {
+    }
+
     public UserDTO(String username) {
         this.username = username;
     }

@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
 
 import org.springframework.stereotype.Service;
 
+import com.gamedevs5.gamedevs5.models.Message;
 import com.gamedevs5.gamedevs5.models.User;
 
 import com.gamedevs5.gamedevs5.models.Gameroom.GameRoom;
@@ -79,6 +80,25 @@ public class GameRoomService {
         }
         gameRoom.getListOfPlayers().add(user);
 
+        return mongoOperations.save(gameRoom);
+    }
+
+    public GameRoom leaveGameRoom(String gameRoomID, User user) {
+
+        GameRoom gameRoom = getGameRoomById(gameRoomID);
+        if (gameRoom == null) {
+            return null;
+        }
+        gameRoom.getListOfPlayers().remove(user);
+        return mongoOperations.save(gameRoom);
+    }
+
+    public GameRoom sendMessageToGroup(String gameRoomID, Message message) {
+        GameRoom gameRoom = getGameRoomById(gameRoomID);
+        if (gameRoom == null) {
+            return null;
+        }
+        gameRoom.getRoomChat().getListOfMessages().add(message);
         return mongoOperations.save(gameRoom);
     }
 
