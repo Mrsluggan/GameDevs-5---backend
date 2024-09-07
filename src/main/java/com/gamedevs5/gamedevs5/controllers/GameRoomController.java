@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -64,16 +65,34 @@ public class GameRoomController {
 
     // ----------------------------------
 
-    @MessageMapping("/join/{gameRoomID}")
-    @SendTo("/topic/message/{gameRoomID}")
-    public GameRoom join(@DestinationVariable String gameRoomID, @Payload User user) {
+    @GetMapping("checkplayer/{username}")
+    public ResponseEntity<GameRoom> getUser(@PathVariable("username") String username) {
+        GameRoom gameRoom = gameRoomService.checkIfUserIsInGame(username);
+        if (gameRoom == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        return ResponseEntity.ok(gameRoom);
+    }
+
+    // -------------------------------
+    @PutMapping("/join/{gameRoomID}")
+    public void join(@PathVariable String gameRoomID, @RequestBody User user) {
         System.out.println("Joining game room: " + user.getUsername());
-        return null;
+        gameRoomService.joinGameRoom(gameRoomID, user);
+        
+    }
+
+    @PutMapping("/leave/{gameRoomID}")
+    public void leaveGameRoom(@PathVariable String gameRoomID, @RequestBody User user) {
+        System.out.println("Leaving game room: " + user.getUsername());
+        gameRoomService.leaveGameRoom(gameRoomID, user);
     }
 
     @MessageMapping("/message/{gameRoomID}")
     @SendTo("/topic/message/{gameRoomID}")
     public Message sendMessage(@DestinationVariable String gameRoomID, @RequestBody Message message) {
+        gameRoomService.sendMessageToGroup(gameRoomID, message);
         return message;
     }
 
@@ -81,13 +100,6 @@ public class GameRoomController {
     @SendTo("/topic/welcome/{groupId}")
     public Message hello(@DestinationVariable String groupId, @RequestBody UserDTO user) {
         return new Message(user.getUsername(), "Welcome to the game " + user.getUsername());
-    }
-
-    @MessageMapping("/echo")
-    @SendTo("/topic/test")
-    public String ass() {
-        System.out.println("här komm ett meddelande");
-        return "3===D";
     }
 
 }
