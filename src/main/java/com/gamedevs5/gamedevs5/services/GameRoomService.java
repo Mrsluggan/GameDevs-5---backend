@@ -4,9 +4,10 @@ import java.util.Collections;
 import java.util.List;
 
 import org.springframework.data.mongodb.core.MongoOperations;
-
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.gamedevs5.gamedevs5.models.Message;
 import com.gamedevs5.gamedevs5.models.User;
 
 import com.gamedevs5.gamedevs5.models.Gameroom.GameRoom;
@@ -17,9 +18,12 @@ import com.mongodb.client.result.DeleteResult;
 public class GameRoomService {
 
     private final MongoOperations mongoOperations;
+    private UserService userService;
 
-    public GameRoomService(MongoOperations mongoOperations) {
+    public GameRoomService(MongoOperations mongoOperations, UserService userService) {
         this.mongoOperations = mongoOperations;
+        this.userService = userService;
+
     }
 
     public GameRoom getGameRoomById(String gameRoomID) {
@@ -77,9 +81,62 @@ public class GameRoomService {
         if (gameRoom == null) {
             return null;
         }
-        gameRoom.getListOfPlayers().add(user);
+        for (GameRoom gameRooms : getAllGamerooms()) {
 
+            for (User player : gameRooms.getListOfPlayers()) {
+                if (user.getUsername().equals(player.getUsername())) {
+                    System.out.println("Denna spelare är redan i ett pågående spel");
+                    return null;
+                }
+            }
+
+        }
+        System.out.println("spelare joinade");
+        gameRoom.getListOfPlayers().add(user);
         return mongoOperations.save(gameRoom);
+    }
+
+    public GameRoom leaveGameRoom(String gameRoomID, User user) {
+
+        GameRoom gameRoom = getGameRoomById(gameRoomID);
+        if (gameRoom == null) {
+            return null;
+        }
+        List<User> players = gameRoom.getListOfPlayers();
+        players.removeIf(player -> player.getUsername().equals(user.getUsername()));
+        return mongoOperations.save(gameRoom);
+    }
+
+    public GameRoom startGame(String gameRoomID) {
+
+        GameRoom gameRoom = getGameRoomById(gameRoomID);
+        if (gameRoom == null) {
+            return null;
+        }
+
+        gameRoom.setStatus(true);
+        return mongoOperations.save(gameRoom);
+    }
+
+    public GameRoom sendMessageToGroup(String gameRoomID, Message message) {
+        GameRoom gameRoom = getGameRoomById(gameRoomID);
+        if (gameRoom == null) {
+            return null;
+        }
+        gameRoom.getRoomChat().getListOfMessages().add(message);
+        return mongoOperations.save(gameRoom);
+    }
+
+    public GameRoom checkIfUserIsInGame(String username) {
+
+        for (GameRoom gameRoom : getAllGamerooms()) {
+            for (User player : gameRoom.getListOfPlayers()) {
+                if (player.getUsername().equals(username)) {
+                    return gameRoom;
+                }
+            }
+        }
+        return null;
     }
 
 }
