@@ -13,7 +13,12 @@ public class WordService {
     WordRepository wordRepository;
 
     public Word saveWord(Word word) {
+
+        String wordString = word.getWord().toLowerCase();
+        word.setWord(wordString);
+
         Word wordExists = wordRepository.findByWord(word.getWord());
+
         if (wordExists != null) {
             System.out.println("Ordet finns redan");
             throw new IllegalArgumentException("Ordet finns redan");
