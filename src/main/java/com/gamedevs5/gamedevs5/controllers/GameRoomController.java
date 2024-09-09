@@ -21,6 +21,7 @@ import com.gamedevs5.gamedevs5.dto.UserDTO;
 import com.gamedevs5.gamedevs5.dto.Welcome;
 import com.gamedevs5.gamedevs5.models.Message;
 import com.gamedevs5.gamedevs5.models.User;
+import com.gamedevs5.gamedevs5.models.Gameroom.Canvas;
 import com.gamedevs5.gamedevs5.models.Gameroom.GameRoom;
 import com.gamedevs5.gamedevs5.services.GameRoomService;
 
@@ -101,5 +102,10 @@ public class GameRoomController {
     public Message hello(@DestinationVariable String groupId, @RequestBody UserDTO user) {
         return new Message(user.getUsername(), "Welcome to the game " + user.getUsername());
     }
-
+    @MessageMapping("/updatecanvase/{groupId}")
+    @SendTo("/topic/updatecanvas/{groupId}")
+    public Canvas updateCanvas(@DestinationVariable String groupId, @RequestBody Canvas canvas) {
+        System.out.println(canvas.getX());
+        return canvas;
+    }
 }
