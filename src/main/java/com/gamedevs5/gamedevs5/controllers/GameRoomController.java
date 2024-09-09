@@ -48,6 +48,16 @@ public class GameRoomController {
         return ResponseEntity.ok(gameRoomService.getAllGamerooms());
     }
 
+    @GetMapping("{gameRoomID}/players")
+    public ResponseEntity<List<User>> getPlayersInGameRoom(@PathVariable("gameRoomID") String gameRoomID) {
+        List<User> players = gameRoomService.getPlayersInGameRoom(gameRoomID);
+
+        if (players == null || players.isEmpty()) {
+            return ResponseEntity.badRequest().body(null);
+        }
+        return ResponseEntity.ok(players);
+    }
+
     @PostMapping("create")
     public ResponseEntity<GameRoom> createGameRoom(@RequestBody GameRoom gameRoom) {
         System.out.println("newGameRoom: " + gameRoom.getGameRoomName());
@@ -81,7 +91,7 @@ public class GameRoomController {
     public void join(@PathVariable String gameRoomID, @RequestBody User user) {
         System.out.println("Joining game room: " + user.getUsername());
         gameRoomService.joinGameRoom(gameRoomID, user);
-        
+
     }
 
     @PutMapping("/leave/{gameRoomID}")
@@ -102,6 +112,7 @@ public class GameRoomController {
     public Message hello(@DestinationVariable String groupId, @RequestBody UserDTO user) {
         return new Message(user.getUsername(), "Welcome to the game " + user.getUsername());
     }
+
     @MessageMapping("/updatecanvase/{groupId}")
     @SendTo("/topic/updatecanvas/{groupId}")
     public Canvas updateCanvas(@DestinationVariable String groupId, @RequestBody Canvas canvas) {

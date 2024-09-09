@@ -2,6 +2,7 @@ package com.gamedevs5.gamedevs5.services;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -47,6 +48,20 @@ public class GameRoomService {
             throw new RuntimeException("An error occurred while retrieving the game rooms", e);
         }
 
+    }
+
+    public List<User> getPlayersInGameRoom(String gameRoomID) {
+        GameRoom gameRoom = getGameRoomById(gameRoomID);
+        if (gameRoom != null) {
+
+            List<User> updatedPlayers = gameRoom.getListOfPlayers().stream()
+                    .map(player -> userService.getUserByUsername(player.getUsername()))
+
+                    .collect(Collectors.toList());
+            return updatedPlayers;
+        } else {
+            return Collections.emptyList();
+        }
     }
 
     public GameRoom createGameRoom(GameRoom newGameRoom) {
