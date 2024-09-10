@@ -33,7 +33,7 @@ class GameRoomTest {
     @Test
     public void testCreateGameRoom() throws Exception {
 
-        GameRoom gameRoom = new GameRoom("1", "GameRoomName", "userid", null, null, true);
+        GameRoom gameRoom = new GameRoom();
 
         when(gameRoomService.createGameRoom(gameRoom)).thenReturn(gameRoom);
 

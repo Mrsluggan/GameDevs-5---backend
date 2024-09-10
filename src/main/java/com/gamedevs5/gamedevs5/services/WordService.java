@@ -36,8 +36,9 @@ public class WordService {
         return wordRepository.findAll();
     }
 
-    public Word getRandomWord() {
-        return wordRepository.findAll().get((int) (Math.random() * wordRepository.count()));
+    public String getRandomWord() {
+       Word randomWord = wordRepository.findAll().get((int) (Math.random() * wordRepository.count()));
+       return randomWord.getWord();
     }
     
 }

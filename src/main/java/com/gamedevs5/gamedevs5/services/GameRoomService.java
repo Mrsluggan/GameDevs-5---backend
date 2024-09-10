@@ -2,8 +2,10 @@ package com.gamedevs5.gamedevs5.services;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,9 @@ public class GameRoomService {
 
     private final MongoOperations mongoOperations;
     private UserService userService;
+    
+    @Autowired
+    private WordService wordService;
 
     public GameRoomService(MongoOperations mongoOperations, UserService userService) {
         this.mongoOperations = mongoOperations;
@@ -154,4 +159,32 @@ public class GameRoomService {
         return null;
     }
 
+    public String getPainter(String gameRoomID) {
+        GameRoom gameRoom = mongoOperations.findById(gameRoomID, GameRoom.class);
+        return gameRoom.getPainter();
+    }
+
+    public GameRoom setPainter(String gameRoomID) {
+        GameRoom gameRoom = mongoOperations.findById(gameRoomID, GameRoom.class);
+        User randomPlayer = getRandomPlayer(gameRoom.getListOfPlayers());
+        gameRoom.setPainter(randomPlayer.getUsername());
+        gameRoom.setRandomWord(wordService.getRandomWord());
+
+        return mongoOperations.save(gameRoom);
+    }
+
+    public String getRandomWord(String gameRoomID) {
+        GameRoom gameRoom = mongoOperations.findById(gameRoomID, GameRoom.class);
+        if (gameRoom != null) {
+            return gameRoom.getRandomWord();
+        }
+        return null;
+    }
+
+    private User getRandomPlayer(List<User> players) {
+        Random random = new Random();
+        int randomIndex = random.nextInt(players.size());
+        return players.get(randomIndex);
+    }
+    
 }
