@@ -1,6 +1,7 @@
 package com.gamedevs5.gamedevs5.controllers;
 
 import java.util.List;
+import java.util.Collections;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -52,9 +53,10 @@ public class GameRoomController {
     public ResponseEntity<List<User>> getPlayersInGameRoom(@PathVariable("gameRoomID") String gameRoomID) {
         List<User> players = gameRoomService.getPlayersInGameRoom(gameRoomID);
 
-        if (players == null || players.isEmpty()) {
-            return ResponseEntity.badRequest().body(null);
+        if (players == null) {
+            players = Collections.emptyList();
         }
+
         return ResponseEntity.ok(players);
     }
 

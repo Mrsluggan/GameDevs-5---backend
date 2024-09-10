@@ -84,5 +84,17 @@ public class UserService {
         return guesser;
     }
 
-  
+    public User resetPoints(String username) {
+        Query query = new Query(Criteria.where("username").is(username));
+        User user = mongoOperations.findOne(query, User.class);
+
+        if (user != null) {
+            user.setCurrentPoints(0);
+            mongoOperations.save(user);
+            return user;
+        } else {
+            throw new RuntimeException("Användaren " + username + " finns inte.");
+        }
+    }
+
 }
