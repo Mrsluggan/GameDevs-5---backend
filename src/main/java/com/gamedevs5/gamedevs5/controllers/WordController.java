@@ -12,7 +12,7 @@ import com.gamedevs5.gamedevs5.services.WordService;
 
 
 @RestController
-@CrossOrigin("http://localhost:5173/")
+@CrossOrigin(origins = "http://localhost:5173")
 public class WordController {
 
     @Autowired
@@ -29,7 +29,7 @@ public class WordController {
     }
 
     @GetMapping("getRandomWord")
-    public Word getRandomWord() {
+    public String getRandomWord() {
         return wordService.getRandomWord();
     }
     

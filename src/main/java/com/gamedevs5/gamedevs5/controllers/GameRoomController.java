@@ -3,6 +3,7 @@ package com.gamedevs5.gamedevs5.controllers;
 import java.util.List;
 import java.util.Collections;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -11,6 +12,7 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -28,7 +30,7 @@ import com.gamedevs5.gamedevs5.services.GameRoomService;
 
 @RestController()
 @RequestMapping("/api/gameroom/")
-@CrossOrigin("*")
+@CrossOrigin(origins = "http://localhost:5173")
 public class GameRoomController {
 
     private final GameRoomService gameRoomService;
@@ -40,8 +42,11 @@ public class GameRoomController {
     // Basic Crudd ----------------------------------
     @GetMapping("{gameRoomID}")
     public ResponseEntity<GameRoom> getGameRoom(@PathVariable("gameRoomID") String gameRoomID) {
-
-        return ResponseEntity.ok().body(gameRoomService.getGameRoomById(gameRoomID));
+        GameRoom gameRoom = gameRoomService.getGameRoomById(gameRoomID);
+        if (gameRoom == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.ok(gameRoom);
     }
 
     @GetMapping("")
@@ -74,6 +79,27 @@ public class GameRoomController {
             return ResponseEntity.ok("Game room deleted successfully");
         }
 
+    }
+
+    @GetMapping("painter/{gameRoomID}")
+    public ResponseEntity<String> getPainter(@PathVariable("gameRoomID") String gameRoomID) {
+        return ResponseEntity.ok(gameRoomService.getPainter(gameRoomID));
+    }
+
+    @GetMapping("randomword/{gameRoomID}")
+    public ResponseEntity<String> getRandomWord(@PathVariable("gameRoomID") String gameRoomID) {
+        String randomWord = gameRoomService.getRandomWord(gameRoomID);
+        if (randomWord == null) {
+            System.out.println("No word found for gameroom:" + gameRoomID);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No word found");
+        }
+        System.out.println("Random word: " + randomWord);
+        return ResponseEntity.ok(randomWord);
+    }
+
+    @PostMapping("setpainter/{gameRoomID}")
+    public ResponseEntity<GameRoom> setPainter(@PathVariable("gameRoomID") String gameRoomID) {
+        return ResponseEntity.ok(gameRoomService.setPainter(gameRoomID));
     }
 
     // ----------------------------------
