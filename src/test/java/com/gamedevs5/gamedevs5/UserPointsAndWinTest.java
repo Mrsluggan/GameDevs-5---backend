@@ -64,7 +64,7 @@ class UserPointsAndWinTest {
                     return null;
                 });
 
-        userService.addPoints(userId, userId2);
+        userService.addPoints(userId, 3);
 
 
         assertEquals(3, winner.getCurrentPoints());
