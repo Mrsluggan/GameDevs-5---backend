@@ -9,6 +9,7 @@ import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,10 +38,13 @@ public class GameRoomController {
 
     private final GameRoomService gameRoomService;
     private final UserService userService;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    public GameRoomController(GameRoomService gameRoomService, UserService userService) {
+
+    public GameRoomController(GameRoomService gameRoomService, UserService userService, SimpMessagingTemplate messagingTemplate) {
         this.userService = userService;
         this.gameRoomService = gameRoomService;
+        this.messagingTemplate = messagingTemplate;
     }
 
     // Basic Crudd ----------------------------------
@@ -162,5 +166,10 @@ public class GameRoomController {
     public Canvas updateCanvas(@DestinationVariable String groupId, @RequestBody Canvas canvas) {
         System.out.println(canvas.getX());
         return canvas;
+    }
+
+    @MessageMapping("/clearcanvas/{gameRoomID}")
+    public void handleClearCanvas(@DestinationVariable String gameRoomID) {
+        messagingTemplate.convertAndSend("/topic/clearcanvas/" + gameRoomID, "");
     }
 }
