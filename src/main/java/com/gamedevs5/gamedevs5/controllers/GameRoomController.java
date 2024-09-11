@@ -30,6 +30,7 @@ import com.gamedevs5.gamedevs5.models.Gameroom.Canvas;
 import com.gamedevs5.gamedevs5.models.Gameroom.GameRoom;
 import com.gamedevs5.gamedevs5.services.GameRoomService;
 import com.gamedevs5.gamedevs5.services.UserService;
+import com.mongodb.client.result.DeleteResult;
 
 @RestController()
 @RequestMapping("/api/gameroom/")
@@ -88,14 +89,18 @@ public class GameRoomController {
     @PostMapping("create")
     public ResponseEntity<GameRoom> createGameRoom(@RequestBody GameRoom gameRoom) {
         System.out.println("newGameRoom: " + gameRoom.getGameRoomName());
-        return ResponseEntity.ok(gameRoomService.createGameRoom(gameRoom));
+        GameRoom createdGameRoom = gameRoomService.createGameRoom(gameRoom);
+        messagingTemplate.convertAndSend("/topic/gamerooms", createdGameRoom);
+        return ResponseEntity.ok(createdGameRoom);
     }
 
     @DeleteMapping("delete/{gameRoomID}/{gameRoomOwner}")
     public ResponseEntity<?> deleteGameRoom(@PathVariable("gameRoomID") String gameRoomID, @PathVariable("gameRoomOwner") String gameRoomOwner) {
-        if (gameRoomService.deleteGameRoom(gameRoomID, gameRoomOwner) == null) {
+        DeleteResult deletedGameRoom = gameRoomService.deleteGameRoom(gameRoomID, gameRoomOwner);
+        if (deletedGameRoom == null) {
             return ResponseEntity.badRequest().body("Game room not found");
         } else {
+            messagingTemplate.convertAndSend("/topic/gamerooms/delete", gameRoomID);
             return ResponseEntity.ok("Game room deleted successfully");
         }
 
@@ -139,6 +144,8 @@ public class GameRoomController {
     public void join(@PathVariable String gameRoomID, @RequestBody User user) {
         System.out.println("Joining game room: " + user.getUsername());
         gameRoomService.joinGameRoom(gameRoomID, user);
+        GameRoom gameRoom = gameRoomService.getGameRoomById(gameRoomID);
+        messagingTemplate.convertAndSend("/topic/updategameroom/" + gameRoomID, gameRoom);
 
     }
 
@@ -146,6 +153,8 @@ public class GameRoomController {
     public void leaveGameRoom(@PathVariable String gameRoomID, @RequestBody User user) {
         System.out.println("Leaving game room: " + user.getUsername());
         gameRoomService.leaveGameRoom(gameRoomID, user);
+        GameRoom gameRoom = gameRoomService.getGameRoomById(gameRoomID);
+        messagingTemplate.convertAndSend("/topic/updategameroom/" + gameRoomID, gameRoom);
     }
 
     @MessageMapping("/message/{gameRoomID}")
