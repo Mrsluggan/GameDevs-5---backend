@@ -98,18 +98,6 @@ public class UserController {
 
     }
 
-    @PostMapping("/pointsRewarded")
-    public ResponseEntity<String> addPoints(@RequestParam String winnerId, @RequestParam String painterId) {
-        try {
-            userService.addPoints(winnerId, painterId);
-            return ResponseEntity.ok("points added");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Kunde inte lägga till poäng");
-        }
-
-    }
-
     @PostMapping("/reset-points/{username}")
     public ResponseEntity<?> resetPoints(@PathVariable String username) {
         try {

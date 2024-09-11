@@ -12,6 +12,8 @@ public class User {
     private int currentPoints;
     private int totalWins;
 
+    public User() {}
+
     public User(String userId, String username, String password, int currentPoints, int totalWins) {
         this.userId = userId;
         this.username = username;

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gamedevs5.gamedevs5.dto.UserDTO;
@@ -27,6 +28,7 @@ import com.gamedevs5.gamedevs5.models.User;
 import com.gamedevs5.gamedevs5.models.Gameroom.Canvas;
 import com.gamedevs5.gamedevs5.models.Gameroom.GameRoom;
 import com.gamedevs5.gamedevs5.services.GameRoomService;
+import com.gamedevs5.gamedevs5.services.UserService;
 
 @RestController()
 @RequestMapping("/api/gameroom/")
@@ -34,12 +36,26 @@ import com.gamedevs5.gamedevs5.services.GameRoomService;
 public class GameRoomController {
 
     private final GameRoomService gameRoomService;
+    private final UserService userService;
 
-    public GameRoomController(GameRoomService gameRoomService) {
+    public GameRoomController(GameRoomService gameRoomService, UserService userService) {
+        this.userService = userService;
         this.gameRoomService = gameRoomService;
     }
 
     // Basic Crudd ----------------------------------
+    @PostMapping("/rewardPoints")
+    public ResponseEntity<String> rewardPoints(@RequestParam String username) {
+        try {
+            // Award 2 points to the user with the given username
+            userService.addPoints(username, 2);
+            return ResponseEntity.ok("Points rewarded");
+        } catch (Exception e) {
+            e.printStackTrace(); // Print stack trace for debugging
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Unable to reward points: " + e.getMessage());
+        }
+    }
     @GetMapping("{gameRoomID}")
     public ResponseEntity<GameRoom> getGameRoom(@PathVariable("gameRoomID") String gameRoomID) {
         GameRoom gameRoom = gameRoomService.getGameRoomById(gameRoomID);

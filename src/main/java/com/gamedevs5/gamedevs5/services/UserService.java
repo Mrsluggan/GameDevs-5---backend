@@ -64,24 +64,18 @@ public class UserService {
         }
     }
 
-    public User addPoints(String guesserId, String painterId) {
-        Query guesserQuery = new Query(Criteria.where("userId").is(guesserId));
-        User guesser = mongoOperations.findOne(guesserQuery, User.class);
-
-        Query painterQuery = new Query(Criteria.where("userId").is(painterId));
-        User painter = mongoOperations.findOne(painterQuery, User.class);
-
-        if (guesser == null || painter == null) {
-            throw new RuntimeException("Användaren " + guesserId + " eller " + painterId + " finns inte.");
+    public User addPoints(String username, int points) {
+        Query userQuery = new Query(Criteria.where("username").is(username));
+        User user = mongoOperations.findOne(userQuery, User.class);
+    
+        if (user == null) {
+            throw new RuntimeException("User with username " + username + " not found.");
         }
-
-        guesser.setCurrentPoints(guesser.getCurrentPoints() + 3);
-        painter.setCurrentPoints(painter.getCurrentPoints() + 1);
-
-        mongoOperations.save(guesser);
-        mongoOperations.save(painter);
-
-        return guesser;
+    
+        user.setCurrentPoints(user.getCurrentPoints() + points);
+        mongoOperations.save(user);
+    
+        return user;
     }
 
     public User resetPoints(String username) {
