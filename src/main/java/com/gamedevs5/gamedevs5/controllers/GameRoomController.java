@@ -87,9 +87,9 @@ public class GameRoomController {
         return ResponseEntity.ok(gameRoomService.createGameRoom(gameRoom));
     }
 
-    @DeleteMapping("{gameRoomID}")
-    public ResponseEntity<?> deleteGameRoom(@PathVariable("gameRoomID") String gameRoomID) {
-        if (gameRoomService.deleteGameRoom(gameRoomID) == null) {
+    @DeleteMapping("delete/{gameRoomID}/{gameRoomOwner}")
+    public ResponseEntity<?> deleteGameRoom(@PathVariable("gameRoomID") String gameRoomID, @PathVariable("gameRoomOwner") String gameRoomOwner) {
+        if (gameRoomService.deleteGameRoom(gameRoomID, gameRoomOwner) == null) {
             return ResponseEntity.badRequest().body("Game room not found");
         } else {
             return ResponseEntity.ok("Game room deleted successfully");

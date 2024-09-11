@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -69,31 +71,44 @@ public class GameRoomService {
         }
     }
 
-    public GameRoom createGameRoom(GameRoom newGameRoom) {
-        try {
+   public GameRoom createGameRoom(GameRoom newGameRoom) {
+         try {
+        
+         newGameRoom.setListOfPlayers(Collections.emptyList());
+         newGameRoom.setStatus(false);
+        
+         GameRoomChat gameRoomChat = new GameRoomChat();
+        
+         gameRoomChat.setListOfMessages(Collections.emptyList());
+         newGameRoom.setRoomChat(gameRoomChat);
+        
+        Query query = new Query();
+        query.addCriteria(Criteria.where("gameRoomName").is(newGameRoom.getGameRoomName()));
+        GameRoom gameRoom = mongoOperations.findOne(query, GameRoom.class);
 
-            newGameRoom.setListOfPlayers(Collections.emptyList());
-            newGameRoom.setStatus(false);
-
-            GameRoomChat gameRoomChat = new GameRoomChat();
-
-            gameRoomChat.setListOfMessages(Collections.emptyList());
-            newGameRoom.setRoomChat(gameRoomChat);
-
+        if (gameRoom != null) {
+            throw new RuntimeException("Rumnamnet du angav är upptaget.");
+        }
+         if (newGameRoom.getGameRoomName().length() > 0 ) {
             return mongoOperations.save(newGameRoom);
-        } catch (Exception e) {
-            throw new RuntimeException("An error occurred while creating the game room", e);
-        }
-    }
+         }
+         throw new RuntimeException("Game room name is empty");
+         } catch (Exception e) {
+         throw new RuntimeException("An error occurred while creating the game room", e);
+         }
+         }
 
-    public DeleteResult deleteGameRoom(String gameRoomID) {
-        GameRoom gameRoom = getGameRoomById(gameRoomID);
-        if (gameRoom == null) {
-            return null;
-        }
-        return mongoOperations.remove(gameRoom);
-
-    }
+    public DeleteResult deleteGameRoom(String gameRoomID, String gameRoomOwner) {
+            GameRoom gameRoom = getGameRoomById(gameRoomID);
+            if (gameRoom == null) {
+             return null;
+            } 
+            if (gameRoom.getRoomOwner().equals(gameRoomOwner)) {
+             return mongoOperations.remove(gameRoom);
+            } 
+             return null;
+            
+            }
 
     public GameRoom joinGameRoom(String gameRoomID, User user) {
 
