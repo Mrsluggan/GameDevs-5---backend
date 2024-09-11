@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.gamedevs5.gamedevs5.models.Message;
@@ -181,10 +180,10 @@ public class GameRoomService {
 
     public GameRoom setPainter(String gameRoomID) {
         GameRoom gameRoom = mongoOperations.findById(gameRoomID, GameRoom.class);
-        User randomPlayer = getRandomPlayer(gameRoom.getListOfPlayers());
+        User randomPlayer = getRandomPlayer(gameRoomID);
         gameRoom.setPainter(randomPlayer.getUsername());
         gameRoom.setRandomWord(wordService.getRandomWord());
-
+        
         return mongoOperations.save(gameRoom);
     }
 
@@ -196,10 +195,11 @@ public class GameRoomService {
         return null;
     }
 
-    private User getRandomPlayer(List<User> players) {
+    public User getRandomPlayer(String gameRoomID) {
+        GameRoom gameRoom = mongoOperations.findById(gameRoomID, GameRoom.class);
         Random random = new Random();
-        int randomIndex = random.nextInt(players.size());
-        return players.get(randomIndex);
+        int randomIndex = random.nextInt(gameRoom.getListOfPlayers().size());
+        return gameRoom.getListOfPlayers().get(randomIndex);
     }
     
 }
