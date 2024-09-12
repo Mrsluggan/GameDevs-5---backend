@@ -10,9 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gamedevs5.gamedevs5.models.Word;
 import com.gamedevs5.gamedevs5.services.WordService;
 
-
 @RestController
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 public class WordController {
 
     @Autowired
@@ -32,5 +31,5 @@ public class WordController {
     public String getRandomWord() {
         return wordService.getRandomWord();
     }
-    
+
 }
