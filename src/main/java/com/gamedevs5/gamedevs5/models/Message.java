@@ -1,6 +1,5 @@
 package com.gamedevs5.gamedevs5.models;
 
-import org.springframework.data.annotation.Id;
 
 public class Message {
     

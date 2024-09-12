@@ -6,7 +6,6 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import com.gamedevs5.gamedevs5.models.User;
-import com.gamedevs5.gamedevs5.models.Word;
 
 @Document("gameRoom")
 public class GameRoom {

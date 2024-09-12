@@ -41,8 +41,8 @@ public class GameRoomController {
     private final UserService userService;
     private final SimpMessagingTemplate messagingTemplate;
 
-
-    public GameRoomController(GameRoomService gameRoomService, UserService userService, SimpMessagingTemplate messagingTemplate) {
+    public GameRoomController(GameRoomService gameRoomService, UserService userService,
+            SimpMessagingTemplate messagingTemplate) {
         this.userService = userService;
         this.gameRoomService = gameRoomService;
         this.messagingTemplate = messagingTemplate;
@@ -61,6 +61,7 @@ public class GameRoomController {
                     .body("Unable to reward points: " + e.getMessage());
         }
     }
+
     @GetMapping("{gameRoomID}")
     public ResponseEntity<GameRoom> getGameRoom(@PathVariable("gameRoomID") String gameRoomID) {
         GameRoom gameRoom = gameRoomService.getGameRoomById(gameRoomID);
@@ -95,7 +96,9 @@ public class GameRoomController {
     }
 
     @DeleteMapping("delete/{gameRoomID}/{gameRoomOwner}")
-    public ResponseEntity<?> deleteGameRoom(@PathVariable("gameRoomID") String gameRoomID, @PathVariable("gameRoomOwner") String gameRoomOwner) {
+
+    public ResponseEntity<?> deleteGameRoom(@PathVariable("gameRoomID") String gameRoomID,
+            @PathVariable("gameRoomOwner") String gameRoomOwner) {
         DeleteResult deletedGameRoom = gameRoomService.deleteGameRoom(gameRoomID, gameRoomOwner);
         if (deletedGameRoom == null) {
             return ResponseEntity.badRequest().body("Game room not found");
@@ -111,6 +114,11 @@ public class GameRoomController {
         return ResponseEntity.ok(gameRoomService.getPainter(gameRoomID));
     }
 
+    @GetMapping("randomplayer/{gameRoomID}")
+    public ResponseEntity<User> randomPlayer(@PathVariable("gameRoomID") String gameRoomID) {
+        return ResponseEntity.ok(gameRoomService.getRandomPlayer(gameRoomID));
+    }
+
     @GetMapping("randomword/{gameRoomID}")
     public ResponseEntity<String> getRandomWord(@PathVariable("gameRoomID") String gameRoomID) {
         String randomWord = gameRoomService.getRandomWord(gameRoomID);
@@ -122,8 +130,9 @@ public class GameRoomController {
         return ResponseEntity.ok(randomWord);
     }
 
-    @PostMapping("setpainter/{gameRoomID}")
+    @GetMapping("/setpainter/{gameRoomID}")
     public ResponseEntity<GameRoom> setPainter(@PathVariable("gameRoomID") String gameRoomID) {
+        System.out.println("nu byter det spelare");
         return ResponseEntity.ok(gameRoomService.setPainter(gameRoomID));
     }
 
@@ -175,6 +184,12 @@ public class GameRoomController {
     public Canvas updateCanvas(@DestinationVariable String groupId, @RequestBody Canvas canvas) {
         System.out.println(canvas.getX());
         return canvas;
+    }
+
+    @MessageMapping("/updategame/{groupId}")
+    @SendTo("/topic/updategame/{groupId}")
+    public GameRoom updateGame(@DestinationVariable String groupId) {
+        return gameRoomService.getGameRoomById(groupId);
     }
 
     @MessageMapping("/clearcanvas/{gameRoomID}")
