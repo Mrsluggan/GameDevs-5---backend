@@ -31,7 +31,7 @@ import com.mongodb.client.result.DeleteResult;
 
 @RestController()
 @RequestMapping("/api/gameroom/")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "*")
 public class GameRoomController {
 
     private final GameRoomService gameRoomService;
