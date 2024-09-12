@@ -23,7 +23,7 @@ public class GameRoomService {
 
     private final MongoOperations mongoOperations;
     private UserService userService;
-    
+
     @Autowired
     private WordService wordService;
 
@@ -39,7 +39,7 @@ public class GameRoomService {
             GameRoom gameRoom = mongoOperations.findById(gameRoomID, GameRoom.class);
             return gameRoom;
         } catch (Exception e) {
-            throw new RuntimeException("An error occurred while retrieving the game room with ID: " + gameRoomID, e);
+            throw new RuntimeException("Fel vid hämtning av spelrum med IDt: " + gameRoomID, e);
         }
     }
 
@@ -51,7 +51,7 @@ public class GameRoomService {
             }
             return listOfGameRooms;
         } catch (Exception e) {
-            throw new RuntimeException("An error occurred while retrieving the game rooms", e);
+            throw new RuntimeException("Fel vid hämtning av spelrum", e);
         }
 
     }
@@ -70,44 +70,44 @@ public class GameRoomService {
         }
     }
 
-   public GameRoom createGameRoom(GameRoom newGameRoom) {
-         try {
-        
-         newGameRoom.setListOfPlayers(Collections.emptyList());
-         newGameRoom.setStatus(false);
-        
-         GameRoomChat gameRoomChat = new GameRoomChat();
-        
-         gameRoomChat.setListOfMessages(Collections.emptyList());
-         newGameRoom.setRoomChat(gameRoomChat);
-        
-        Query query = new Query();
-        query.addCriteria(Criteria.where("gameRoomName").is(newGameRoom.getGameRoomName()));
-        GameRoom gameRoom = mongoOperations.findOne(query, GameRoom.class);
+    public GameRoom createGameRoom(GameRoom newGameRoom) {
+        try {
 
-        if (gameRoom != null) {
-            throw new RuntimeException("Rumnamnet du angav är upptaget.");
+            newGameRoom.setListOfPlayers(Collections.emptyList());
+            newGameRoom.setStatus(false);
+
+            GameRoomChat gameRoomChat = new GameRoomChat();
+
+            gameRoomChat.setListOfMessages(Collections.emptyList());
+            newGameRoom.setRoomChat(gameRoomChat);
+
+            Query query = new Query();
+            query.addCriteria(Criteria.where("gameRoomName").is(newGameRoom.getGameRoomName()));
+            GameRoom gameRoom = mongoOperations.findOne(query, GameRoom.class);
+
+            if (gameRoom != null) {
+                throw new RuntimeException("Rumnamnet du angav är upptaget.");
+            }
+            if (newGameRoom.getGameRoomName().length() > 0) {
+                return mongoOperations.save(newGameRoom);
+            }
+            throw new RuntimeException("Du måste ange ett namn på rummet");
+        } catch (Exception e) {
+            throw new RuntimeException("Fel vid skapande av rum", e);
         }
-         if (newGameRoom.getGameRoomName().length() > 0 ) {
-            return mongoOperations.save(newGameRoom);
-         }
-         throw new RuntimeException("Game room name is empty");
-         } catch (Exception e) {
-         throw new RuntimeException("An error occurred while creating the game room", e);
-         }
-         }
+    }
 
     public DeleteResult deleteGameRoom(String gameRoomID, String gameRoomOwner) {
-            GameRoom gameRoom = getGameRoomById(gameRoomID);
-            if (gameRoom == null) {
-             return null;
-            } 
-            if (gameRoom.getRoomOwner().equals(gameRoomOwner)) {
-             return mongoOperations.remove(gameRoom);
-            } 
-             return null;
-            
-            }
+        GameRoom gameRoom = getGameRoomById(gameRoomID);
+        if (gameRoom == null) {
+            return null;
+        }
+        if (gameRoom.getRoomOwner().equals(gameRoomOwner)) {
+            return mongoOperations.remove(gameRoom);
+        }
+        return null;
+
+    }
 
     public GameRoom joinGameRoom(String gameRoomID, User user) {
 
@@ -125,7 +125,7 @@ public class GameRoomService {
             }
 
         }
-        System.out.println("spelare joinade");
+        System.out.println("spelare gick med");
         gameRoom.getListOfPlayers().add(user);
         return mongoOperations.save(gameRoom);
     }
@@ -183,7 +183,7 @@ public class GameRoomService {
         User randomPlayer = getRandomPlayer(gameRoomID);
         gameRoom.setPainter(randomPlayer.getUsername());
         gameRoom.setRandomWord(wordService.getRandomWord());
-        
+
         return mongoOperations.save(gameRoom);
     }
 
@@ -201,5 +201,5 @@ public class GameRoomService {
         int randomIndex = random.nextInt(gameRoom.getListOfPlayers().size());
         return gameRoom.getListOfPlayers().get(randomIndex);
     }
-    
+
 }
