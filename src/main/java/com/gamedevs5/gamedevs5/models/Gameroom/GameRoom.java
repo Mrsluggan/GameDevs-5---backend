@@ -14,24 +14,44 @@ public class GameRoom {
     private String id;
     private String gameRoomName;
     private String roomOwner;
-
+    private String painter; 
+    private String randomWord;
     private GameRoomChat gameRoomChat;
     private List<User> listOfPlayers;
     private Boolean status;
+
 
     public GameRoom() {
 
     }
 
-    public GameRoom(String id, String gameRoomName, String roomOwner, GameRoomChat gameRoomChat,
-            List<User> listOfPlayers,
-            Boolean status) {
+
+    public GameRoom(String id, String gameRoomName, String roomOwner, String painter, String randomWord,
+            GameRoomChat gameRoomChat, List<User> listOfPlayers, Boolean status) {
         this.id = id;
         this.gameRoomName = gameRoomName;
         this.roomOwner = roomOwner;
+        this.painter = painter;
+        this.randomWord = randomWord;
         this.gameRoomChat = gameRoomChat;
         this.listOfPlayers = listOfPlayers;
         this.status = status;
+    }
+
+    public String getPainter() {
+        return painter;
+    }
+
+    public void setPainter(String painter) {
+        this.painter = painter;
+    }
+
+    public String getRandomWord() {
+        return randomWord;
+    }
+
+    public void setRandomWord(String word) {
+        this.randomWord = word;
     }
 
     public String getId() {

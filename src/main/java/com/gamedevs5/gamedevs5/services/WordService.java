@@ -13,7 +13,12 @@ public class WordService {
     WordRepository wordRepository;
 
     public Word saveWord(Word word) {
+
+        String wordString = word.getWord().toLowerCase();
+        word.setWord(wordString);
+
         Word wordExists = wordRepository.findByWord(word.getWord());
+
         if (wordExists != null) {
             System.out.println("Ordet finns redan");
             throw new IllegalArgumentException("Ordet finns redan");
@@ -31,8 +36,9 @@ public class WordService {
         return wordRepository.findAll();
     }
 
-    public Word getRandomWord() {
-        return wordRepository.findAll().get((int) (Math.random() * wordRepository.count()));
+    public String getRandomWord() {
+       Word randomWord = wordRepository.findAll().get((int) (Math.random() * wordRepository.count()));
+       return randomWord.getWord();
     }
     
 }

@@ -14,6 +14,11 @@ public class StompController {
     public String broadcastMessage(@Payload String message) {
         return "You have received a message: " + message;
     }
+    @MessageMapping("/lobby")
+    @SendTo("/topic/lobby")
+    public String broadcastLobbyMessage(@Payload String message) {
+        return message; 
+    }
 
     
 }

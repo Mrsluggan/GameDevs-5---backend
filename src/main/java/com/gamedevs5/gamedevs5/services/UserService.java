@@ -63,4 +63,32 @@ public class UserService {
             throw new RuntimeException("Användaren " + userId + " finns inte.");
         }
     }
+
+    public User addPoints(String username, int points) {
+        Query userQuery = new Query(Criteria.where("username").is(username));
+        User user = mongoOperations.findOne(userQuery, User.class);
+
+        if (user == null) {
+            throw new RuntimeException("Användaren med namn " + username + " hittades inte.");
+        }
+
+        user.setCurrentPoints(user.getCurrentPoints() + points);
+        mongoOperations.save(user);
+
+        return user;
+    }
+
+    public User resetPoints(String username) {
+        Query query = new Query(Criteria.where("username").is(username));
+        User user = mongoOperations.findOne(query, User.class);
+
+        if (user != null) {
+            user.setCurrentPoints(0);
+            mongoOperations.save(user);
+            return user;
+        } else {
+            throw new RuntimeException("Användaren " + username + " finns inte.");
+        }
+    }
+
 }

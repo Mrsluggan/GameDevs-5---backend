@@ -1,25 +1,18 @@
 package com.gamedevs5.gamedevs5.models;
 
+
 public class Message {
-    private String id;
+    
     private String sender;
     private String content;
 
     public Message() {
+
     }
 
-    public Message(String id, String sender, String content) {
-        this.id = id;
+    public Message(String sender, String content) {
         this.sender = sender;
         this.content = content;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getSender() {

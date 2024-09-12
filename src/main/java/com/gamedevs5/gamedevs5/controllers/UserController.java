@@ -96,4 +96,15 @@ public class UserController {
 
     }
 
+    @PostMapping("/reset-points/{username}")
+    public ResponseEntity<?> resetPoints(@PathVariable String username) {
+        try {
+            User updatedUser = userService.resetPoints(username);
+            return ResponseEntity.ok(updatedUser);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Kunda inte nollställa poäng för " + username);
+        }
+    }
+
 }
