@@ -67,14 +67,14 @@ public class UserService {
     public User addPoints(String username, int points) {
         Query userQuery = new Query(Criteria.where("username").is(username));
         User user = mongoOperations.findOne(userQuery, User.class);
-    
+
         if (user == null) {
-            throw new RuntimeException("User with username " + username + " not found.");
+            throw new RuntimeException("Användaren med namn " + username + " hittades inte.");
         }
-    
+
         user.setCurrentPoints(user.getCurrentPoints() + points);
         mongoOperations.save(user);
-    
+
         return user;
     }
 

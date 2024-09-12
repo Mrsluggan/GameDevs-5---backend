@@ -8,13 +8,11 @@ import static org.mockito.Mockito.when;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Query;
 
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-
 
 import com.gamedevs5.gamedevs5.models.User;
 import com.gamedevs5.gamedevs5.services.UserService;
@@ -22,7 +20,6 @@ import com.gamedevs5.gamedevs5.services.UserService;
 @SpringBootTest
 @AutoConfigureMockMvc
 class UserPointsAndWinTest {
-
 
     @Mock
     private MongoOperations mongoOperations;
@@ -41,7 +38,7 @@ class UserPointsAndWinTest {
         when(userService.addWin(userId)).thenReturn(user);
 
         assertEquals(2, user.getTotalWins());
-        
+
     }
 
     @Test
@@ -67,11 +64,9 @@ class UserPointsAndWinTest {
         userService.addPoints(username1, 3);
         userService.addPoints(username2, 1);
 
-
         assertEquals(3, winner.getCurrentPoints());
         assertEquals(1, painter.getCurrentPoints());
-     
-        
+
     }
-    
+
 }

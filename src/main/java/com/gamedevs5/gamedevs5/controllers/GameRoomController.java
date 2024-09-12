@@ -7,13 +7,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -23,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gamedevs5.gamedevs5.dto.UserDTO;
-import com.gamedevs5.gamedevs5.dto.Welcome;
 import com.gamedevs5.gamedevs5.models.Message;
 import com.gamedevs5.gamedevs5.models.User;
 import com.gamedevs5.gamedevs5.models.Gameroom.Canvas;
@@ -48,15 +45,13 @@ public class GameRoomController {
         this.messagingTemplate = messagingTemplate;
     }
 
-    // Basic Crudd ----------------------------------
     @PostMapping("/rewardPoints")
     public ResponseEntity<String> rewardPoints(@RequestParam String username) {
         try {
-            // Award 2 points to the user with the given username
             userService.addPoints(username, 2);
             return ResponseEntity.ok("Points rewarded");
         } catch (Exception e) {
-            e.printStackTrace(); // Print stack trace for debugging
+            e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Unable to reward points: " + e.getMessage());
         }
@@ -136,8 +131,6 @@ public class GameRoomController {
         return ResponseEntity.ok(gameRoomService.setPainter(gameRoomID));
     }
 
-    // ----------------------------------
-
     @GetMapping("checkplayer/{username}")
     public ResponseEntity<GameRoom> getUser(@PathVariable("username") String username) {
         GameRoom gameRoom = gameRoomService.checkIfUserIsInGame(username);
@@ -148,7 +141,6 @@ public class GameRoomController {
         return ResponseEntity.ok(gameRoom);
     }
 
-    // -------------------------------
     @PutMapping("/join/{gameRoomID}")
     public void join(@PathVariable String gameRoomID, @RequestBody User user) {
         System.out.println("Joining game room: " + user.getUsername());
