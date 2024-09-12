@@ -96,7 +96,6 @@ public class GameRoomController {
     }
 
     @DeleteMapping("delete/{gameRoomID}/{gameRoomOwner}")
-
     public ResponseEntity<?> deleteGameRoom(@PathVariable("gameRoomID") String gameRoomID,
             @PathVariable("gameRoomOwner") String gameRoomOwner) {
         DeleteResult deletedGameRoom = gameRoomService.deleteGameRoom(gameRoomID, gameRoomOwner);
@@ -107,6 +106,11 @@ public class GameRoomController {
             return ResponseEntity.ok("Game room deleted successfully");
         }
 
+    }
+
+    @PutMapping("startgame/{gameRoomID}")
+    public ResponseEntity<GameRoom> startGame(@PathVariable("gameRoomID") String gameRoomID) {
+        return ResponseEntity.ok(gameRoomService.startGame(gameRoomID));
     }
 
     @GetMapping("painter/{gameRoomID}")
