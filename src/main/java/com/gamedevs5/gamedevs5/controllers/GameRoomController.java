@@ -106,11 +106,13 @@ public class GameRoomController {
 
     @GetMapping("painter/{gameRoomID}")
     public ResponseEntity<String> getPainter(@PathVariable("gameRoomID") String gameRoomID) {
+        messagingTemplate.convertAndSend("/topic/updategame/" + gameRoomID, "Painter GET");
         return ResponseEntity.ok(gameRoomService.getPainter(gameRoomID));
     }
 
     @GetMapping("randomplayer/{gameRoomID}")
     public ResponseEntity<User> randomPlayer(@PathVariable("gameRoomID") String gameRoomID) {
+        messagingTemplate.convertAndSend("/topic/updategame/" + gameRoomID, "Painter changed");
         return ResponseEntity.ok(gameRoomService.getRandomPlayer(gameRoomID));
     }
 
@@ -122,13 +124,16 @@ public class GameRoomController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No word found");
         }
         System.out.println("Random word: " + randomWord);
+        messagingTemplate.convertAndSend("/topic/updategame/" + gameRoomID, "randomword changed");
         return ResponseEntity.ok(randomWord);
     }
 
     @GetMapping("/setpainter/{gameRoomID}")
     public ResponseEntity<GameRoom> setPainter(@PathVariable("gameRoomID") String gameRoomID) {
         System.out.println("nu byter det spelare");
+        messagingTemplate.convertAndSend("/topic/updategame/" + gameRoomID, "Painter changed");
         return ResponseEntity.ok(gameRoomService.setPainter(gameRoomID));
+       
     }
 
     @GetMapping("checkplayer/{username}")
@@ -137,7 +142,7 @@ public class GameRoomController {
         if (gameRoom == null) {
             return ResponseEntity.badRequest().build();
         }
-
+        messagingTemplate.convertAndSend("/topic/updategame/" + gameRoom.getId(), "gameRoom updated");
         return ResponseEntity.ok(gameRoom);
     }
 
@@ -147,7 +152,7 @@ public class GameRoomController {
         gameRoomService.joinGameRoom(gameRoomID, user);
         GameRoom gameRoom = gameRoomService.getGameRoomById(gameRoomID);
         messagingTemplate.convertAndSend("/topic/updategameroom/" + gameRoomID, gameRoom);
-
+        messagingTemplate.convertAndSend("/topic/updategame/" + gameRoomID, gameRoom);
     }
 
     @PutMapping("/leave/{gameRoomID}")
@@ -156,6 +161,7 @@ public class GameRoomController {
         gameRoomService.leaveGameRoom(gameRoomID, user);
         GameRoom gameRoom = gameRoomService.getGameRoomById(gameRoomID);
         messagingTemplate.convertAndSend("/topic/updategameroom/" + gameRoomID, gameRoom);
+        messagingTemplate.convertAndSend("/topic/updategame/" + gameRoomID, gameRoom);
     }
 
     @MessageMapping("/message/{gameRoomID}")
@@ -181,6 +187,7 @@ public class GameRoomController {
     @MessageMapping("/updategame/{groupId}")
     @SendTo("/topic/updategame/{groupId}")
     public GameRoom updateGame(@DestinationVariable String groupId) {
+        messagingTemplate.convertAndSend("/topic/updategame/" + groupId, "gameRoom updated");
         return gameRoomService.getGameRoomById(groupId);
     }
 
