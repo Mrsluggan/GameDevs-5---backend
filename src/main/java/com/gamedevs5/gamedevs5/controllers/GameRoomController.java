@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.gamedevs5.gamedevs5.dto.UserDTO;
 import com.gamedevs5.gamedevs5.models.Message;
@@ -84,10 +85,13 @@ public class GameRoomController {
 
     @PostMapping("create")
     public ResponseEntity<GameRoom> createGameRoom(@RequestBody GameRoom gameRoom) {
-        System.out.println("newGameRoom: " + gameRoom.getGameRoomName());
-        GameRoom createdGameRoom = gameRoomService.createGameRoom(gameRoom);
-        messagingTemplate.convertAndSend("/topic/gamerooms", createdGameRoom);
-        return ResponseEntity.ok(createdGameRoom);
+        try {
+            GameRoom createdGameRoom = gameRoomService.createGameRoom(gameRoom);
+            messagingTemplate.convertAndSend("/topic/gamerooms", createdGameRoom);
+            return new ResponseEntity<>(createdGameRoom, HttpStatus.OK);
+        } catch (RuntimeException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
+        }
     }
 
     @DeleteMapping("delete/{gameRoomID}/{gameRoomOwner}")
